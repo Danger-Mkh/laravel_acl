@@ -8,16 +8,16 @@
                 @csrf
                 <div class="form-group">
                     <label>Role Name : </label>
-                    <input type="text" name="name" class="form-control">
+                    <input type="text" name="name" class="form-control" value="{{ old('name') }}">
                 </div>
                 <div class="form-group">
                     <label>Role Guard : </label>
-                    <input type="text" name="guard_name" class="form-control">
+                    <input type="text" name="guard_name" class="form-control" value="{{ old('guard_name') }}" placeholder="Default Web">
                 </div>
                 @foreach($permissions as $permission)
                     <div class="form-check">
                         <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox" name="permissions[{{ $loop->index }}]" value="{{ $permission->id }}">
+                            <input class="form-check-input" type="checkbox" name="permissions[{{ $loop->index }}]" value="{{ $permission->id }}" @if( in_array( $permission->id , old('permissions', []) ) ) checked  @endif>
                             {{ $permission->name }}
                         </label>
                     </div>
