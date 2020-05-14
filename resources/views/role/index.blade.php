@@ -4,7 +4,9 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-auto">
-            <a class="btn btn-primary" href="{{ route('role.create') }}">Create</a>
+            @can('create_role')
+                <a class="btn btn-primary" href="{{ route('role.create') }}">Create</a>
+            @endcan
            <table class="table">
                 <thead>
                     <tr>
@@ -25,12 +27,16 @@
                             <td>{{ $role->created_at->diffForHumans() }}</td>
                             <td>{{ $role->getAllPermissions()->implode('name', ', ') }}</td>
                             <td>
-                                <form method="post" action="{{ route('role.destroy', compact('role')) }}" class="d-inline-block">
-                                    @csrf
-                                    @method('delete')
-                                    <input type="submit" value="Delete" class="btn btn-sm btn-danger">
-                                </form>
-                                <a href="{{ route('role.edit', compact('role')) }}" class="btn btn-sm btn-primary">Edit</a>
+                                @can('delete_role')
+                                    <form method="post" action="{{ route('role.destroy', compact('role')) }}" class="d-inline-block">
+                                        @csrf
+                                        @method('delete')
+                                        <input type="submit" value="Delete" class="btn btn-sm btn-danger">
+                                    </form>
+                                @endcan
+                                @can('edit_role')
+                                    <a href="{{ route('role.edit', compact('role')) }}" class="btn btn-sm btn-primary">Edit</a>
+                                @endcan
                             </td>
                         </tr>
                     @endforeach

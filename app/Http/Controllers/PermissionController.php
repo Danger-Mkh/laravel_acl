@@ -8,10 +8,10 @@ use Spatie\Permission\Models\Permission;
 class PermissionController extends Controller
 {
 
-//    public function __construct()
-//    {
-//        $this->middleware('can:create_permission')->only('create', 'store');
-//    }
+    public function __construct()
+    {
+        $this->middleware('can:create_permission')->only('create', 'store');
+    }
 
     public function index()
     {
