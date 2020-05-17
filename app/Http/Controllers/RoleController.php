@@ -2,32 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('can:create_role')->only('create','store');
+        $this->middleware('can:create_role')->only('create', 'store');
         $this->middleware('can:edit_role')->only('edit', 'update');
-        $this->middleware('can:delete')->only('destroy');
+        $this->middleware('can:delete_role')->only('destroy');
     }
 
     public function index()
     {
         $roles = Role::all();
+
         return view('role.index', compact('roles'));
     }
 
     public function create()
     {
         $permissions = Permission::all();
+
         return view('role.create', compact('permissions'));
     }
 
-    public function store(Request $request)
+    public function store()
     {
         $data = $this->validated();
 
@@ -36,7 +38,15 @@ class RoleController extends Controller
 
         $role = Role::create($data);
         $role->syncPermissions($permissions);
+
         return redirect()->route('role.index');
+    }
+
+    public function validated()
+    {
+        return request()->validate(['name' => 'required|min:3',
+                                    'guard_name' => 'nullable',
+                                    'permissions' => 'required|array',]);
     }
 
     public function show($id)
@@ -48,10 +58,11 @@ class RoleController extends Controller
     {
         $permissions = Permission::all();
         $role->load('permissions');
-        return  view('role.edit', compact('role', 'permissions'));
+
+        return view('role.edit', compact('role', 'permissions'));
     }
 
-    public function update(Request $request, Role $role)
+    public function update(Role $role)
     {
         $data = $this->validated();
 
@@ -60,21 +71,14 @@ class RoleController extends Controller
 
         $role->update($data);
         $role->syncPermissions($permissions);
+
         return redirect()->route('role.index');
     }
 
     public function destroy(Role $role)
     {
         $role->delete();
-        return redirect()->route('role.index');
-    }
 
-    public function validated()
-    {
-        return request()->validate([
-            'name' => 'required|min:3',
-            'guard_name' => 'nullable',
-            'permissions' => 'required|array'
-        ]);
+        return redirect()->route('role.index');
     }
 }
